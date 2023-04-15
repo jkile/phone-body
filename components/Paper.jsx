@@ -5,8 +5,16 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Model } from "./Phone";
 import { OrbitControls, SpotLight, useHelper } from "@react-three/drei";
 import { DirectionalLightHelper } from "three";
+import { useSpring, animated, config } from "@react-spring/three";
 
-function Phone(props) {
+function Phone({ dive }) {
+  const { position, rotation } = useSpring({
+    rotation: dive ? [0, 1.6, 0] : [0, 1.1, -0.1],
+    position: dive ? [-3, 0.9, -2] : [4, 1, -3],
+
+    config: config.gentle,
+  });
+
   return (
     <>
       <ambientLight intensity={0.5} />
@@ -18,15 +26,17 @@ function Phone(props) {
         position={[-1, 0, 5]}
       />
       {/* <OrbitControls /> */}
-      <Model rotation={[0, 1.1, -0.1]} position={[1, 1, -3]} castShadow />
+      <animated.group rotation={rotation} position={position}>
+        <Model castShadow />
+      </animated.group>
     </>
   );
 }
 
-const Paper = () => {
+const Paper = ({ dive }) => {
   return (
     <Canvas>
-      <Phone />
+      <Phone dive={dive} />
     </Canvas>
   );
 };
