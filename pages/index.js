@@ -1,11 +1,15 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
+import useMeasure from "react-use-measure";
 import Paper from "@/components/Paper";
 import { useState, useEffect } from "react";
-import { useSpring, animated, useTransition } from "@react-spring/web";
+import {
+  useSpring,
+  animated,
+  useTransition,
+  useScroll,
+  config,
+} from "@react-spring/web";
 import useScrollBlock from "./hooks/useScrollBlock";
 
-const inter = Inter({ subsets: ["latin"] });
 const submissions = [
   { artist: "dane burns", title: "yeet" },
   { artist: "jake kile", title: "yeet two" },
@@ -13,8 +17,12 @@ const submissions = [
   { artist: "mark ruffalo", title: "yeet four" },
 ];
 export default function Home() {
+  const [ref, bounds] = useMeasure();
   const [blockScroll, allowScroll] = useScrollBlock();
   const [dive, setDive] = useState(false);
+
+  const { scrollYProgress } = useScroll();
+
   const fade = useTransition(dive, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -33,15 +41,23 @@ export default function Home() {
   }, [dive]);
 
   return (
-    <div className="font-mono text-4xl row px-gr-8 ">
+    <div className="font-mono text-2xl md:text-4xl row px-gr-8 ">
       <section className="min-h-screen w-full">
         <div className="w-grp-5">
           <div className="">phone</div>
           <div className="">body</div>
         </div>
-        <div className={`fixed right-0 top-0 w-full h-full`}>
+        <animated.div
+          className={`absolute right-0 w-full h-full -z-10`}
+          style={{
+            top: scrollYProgress.to(
+              (scrollP) => `${scrollP * bounds.height * 2}px`
+            ),
+          }}
+          ref={ref}
+        >
           <Paper dive={dive} />
-        </div>
+        </animated.div>
       </section>
       <section className="min-h-screen">
         <div className="w-grp-5" />
@@ -83,7 +99,7 @@ export default function Home() {
                   </animated.div>
                 ))}
                 <div
-                  className="pt-gr-10 hover:underline hover:cursor-pointer"
+                  className=" hover:underline hover:cursor-pointer"
                   onClick={() => {
                     setDive(false);
                     allowScroll();
