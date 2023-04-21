@@ -19,7 +19,10 @@ export default function Submissions() {
         <div className="w-grp-5"></div>
         <animated.div className=" w-grp-4 text-lg py-gr-10 flex flex-col">
           {submissions.map((submission) => (
-            <animated.div className="hover:underline hover:cursor-pointer">
+            <animated.div
+              key={submission.artist}
+              className="hover:underline hover:cursor-pointer"
+            >
               <div className="whitespace-nowrap "> {submission.title}</div>
               <div className="whitespace-nowrap text-base">
                 {" "}
